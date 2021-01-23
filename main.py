@@ -1,11 +1,13 @@
 import discord
 import os
-import random
+from src.message_processor import MessageProcessor
 
 TOKEN = os.environ['PRIVATE_KEY']
 
 
 class UltimateBot(discord.Client):
+    message_processor = MessageProcessor()
+
     async def on_ready(self):
         print(f'{client.user} Ultimate discord BOT connected!')
         print(client.guilds)
@@ -14,19 +16,9 @@ class UltimateBot(discord.Client):
     async def on_message(self, message):
         if message.author == client.user:
             return
-
-        brooklyn_99_quotes = [
-            'I\'m the human form of the 💯 emoji.',
-            'Bingpot!',
-            (
-                'Cool. Cool cool cool cool cool cool cool, '
-                'no doubt no doubt no doubt no doubt.'
-            ),
-        ]
-
-        if message.content == '99!':
-            response = random.choice(brooklyn_99_quotes)
-            await message.channel.send(response)
+        is_response, response_message = self.message_processor.parse(message)
+        if is_response:
+            await message.channel.send(response_message)
 
 
 client = UltimateBot()
