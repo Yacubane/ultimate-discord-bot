@@ -7,7 +7,13 @@ import urllib
 
 
 def run_code(args):
-    code = args.content.replace("+run\n```\n", "").replace('\n```', '').replace(r'"', r'\"')#.replace('\n', '\r\n')
+    code = args.content\
+        .replace("+run\n```\n", "")\
+        .replace("+run ```\n", "") \
+        .replace("+run ```", "") \
+        .replace("+run\n```", "") \
+        .replace('\n```', '')\
+        .replace(r'"', r'\"')
 
     url = 'https://pynative.com/editor.php'
     post_fields = {"data": '{"source_code":"' + code + '","language_id":10,"stdin":""}'}
