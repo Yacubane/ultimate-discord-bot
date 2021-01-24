@@ -1,8 +1,10 @@
 import discord
 import os
+from dotenv import load_dotenv
 from src.message_processor import MessageProcessor
 from src.watcher import Watcher
 
+load_dotenv()
 TOKEN = os.environ['PRIVATE_KEY']
 watcher = Watcher()
 
