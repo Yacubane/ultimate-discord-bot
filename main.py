@@ -1,8 +1,10 @@
 import discord
 import os
 from src.message_processor import MessageProcessor
+from src.watcher import Watcher
 
 TOKEN = os.environ['PRIVATE_KEY']
+watcher = Watcher()
 
 
 class UltimateBot(discord.Client):
@@ -19,6 +21,7 @@ class UltimateBot(discord.Client):
         is_response, response_message = self.message_processor.parse(message)
         if is_response:
             await message.channel.send(response_message)
+        await watcher.check(message)
 
 
 client = UltimateBot()

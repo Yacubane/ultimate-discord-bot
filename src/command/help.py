@@ -1,3 +1,14 @@
+desc = """
+**Funkcje**
+- +votekick zajma | Zajma dostaje ostrzerzenie
+- +votekick @user | @user dostaje ostrzerzenie
+- +votekick stats
+- +ciri | :disappointed_relieved: [*]
+- +bajo jajo
+- +run ``` code ``` | uruchamia podzik w pytongu
+"""
+
+
 def print_help():
-    return "nic ci nie powiem na razie"
-# to do
+    return desc
+

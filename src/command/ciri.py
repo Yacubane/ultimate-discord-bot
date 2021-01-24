@@ -9,7 +9,7 @@ class Ciri:
         "Wiadomo kto, wiadomo kogo - Zajma, Ciri",
         "nk wytłumaczy dlaczego on ją zabił :/",
         "ej ej Kuba, czemu ją zabiłeś?",
-        "Czemu Ciri nie zje dziś obiedku?\n- Bo nie żyje",
+        "Czemu Ciri nie zje dziś obiadku?\n- Bo nie żyje",
         "Cześć Kuba, widziałeś może dzieś Ciri?",
         "Zajma, co tam u Ciri?",
     ]
