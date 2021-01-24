@@ -12,7 +12,8 @@ def run_code(args):
         .replace("+run ```\n", "") \
         .replace("+run ```", "") \
         .replace("+run\n```", "") \
-        .replace('\n```', '')\
+        .replace('\n```', '') \
+        .replace('```', '') \
         .replace(r'"', r'\"')
 
     url = 'https://pynative.com/editor.php'
