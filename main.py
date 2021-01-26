@@ -20,7 +20,7 @@ class UltimateBot(discord.Client):
     async def on_message(self, message):
         if message.author == client.user:
             return
-        is_response, response_message = self.message_processor.parse(message)
+        is_response, response_message = await self.message_processor.parse(message, client, discord)
         if is_response:
             message_length = len(response_message)
             if len(response_message) > 2000:

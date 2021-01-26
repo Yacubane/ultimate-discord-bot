@@ -2,3 +2,5 @@ discord
 psutil
 requests
 python-dotenv
+PyNaCl
+ffmpeg-python
