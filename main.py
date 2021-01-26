@@ -22,7 +22,11 @@ class UltimateBot(discord.Client):
             return
         is_response, response_message = self.message_processor.parse(message)
         if is_response:
-            await message.channel.send(response_message)
+            message_length = len(response_message)
+            if len(response_message) > 2000:
+                await message.channel.send("Discord dopuszcza wiadomości <=2000 znaków, a to coś ma " + message_length)
+            else:
+                await message.channel.send(response_message)
         await watcher.check(message)
 
 

@@ -14,10 +14,9 @@ class Trigger:
 
     async def run(self, args):
         message = args.content.lower()
-        words = message.split(' ')[:10]
+        message = message[:500]
         for user, triggers in self.triggers.items():
             for trigger in triggers:
-                for word in words:
-                    if trigger == word:
-                        await args.channel.send(f'HALO, {user}! ktoś użył trigger word "{trigger}"')
-                        return
+                if trigger in message:
+                    await args.channel.send(f'HALO, {user}! ktoś użył trigger word "{trigger}"')
+                    return
