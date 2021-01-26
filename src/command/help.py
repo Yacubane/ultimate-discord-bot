@@ -5,7 +5,8 @@ desc = """
 - +votekick stats
 - +ciri | :disappointed_relieved: [*]
 - +bajo jajo
-- +run ``` code ``` | uruchamia podzik w pytongu
+- +czy [question]
+- +run ` ` ` code ` ` ` | uruchamia podzik w pytongu
 """
 
 

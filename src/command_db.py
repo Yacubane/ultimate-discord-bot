@@ -5,6 +5,7 @@ from src.command.help import print_help
 from src.command.votekick import Votekick
 from src.command.run_code import run_code
 from src.command.ciri import Ciri
+from src.command.decide import decide
 
 test_cmd = TestCMD()
 votekick_zajma = VotekickZajma()
@@ -22,5 +23,6 @@ context_free_command_db = {
 
 start_with_command_db = {
     '+votekick': lambda args: votekick.run(args),
-    '+run': lambda args: run_code(args)
+    '+run': lambda args: run_code(args),
+    '+czy': lambda args: decide(),
 }
