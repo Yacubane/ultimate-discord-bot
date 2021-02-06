@@ -1,6 +1,5 @@
 import asyncio
 
-
 class Voice:
     async def run(self, context, client, discord):
         user = context.author
