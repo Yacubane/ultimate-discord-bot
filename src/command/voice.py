@@ -1,21 +1,72 @@
-import asyncio
+import os
+from time import sleep
+import datetime
+from os import listdir
+from os.path import isfile, join
+import random
+
+DEV_MODE = os.environ['PRIVATE_KEY']
+
 
 class Voice:
+    path = './src/asset/voice'
+    path_to_ffmpeg = "./bin/ffmpeg.exe" if DEV_MODE else "./bin/ffmpeg"
+    voice_client = None
+    voice_channel = None
+    last_active_time = None
+    is_connected = False
+    is_waiting = False
+
+    def __init__(self):
+        self.files = [f for f in listdir(self.path) if isfile(join(self.path, f))]
+
     async def run(self, context, client, discord):
+        message = context.content
+        title = None
+        if len(message) > 8:
+            title = message.replace("+płotnik ", '')
         user = context.author
-        voice_channel = user.voice.channel
-        channel = None
-        # only play music if user is in a voice channel
-        if voice_channel != None:
-            # grab user's voice channel
-            channel = voice_channel.name
-            await context.channel.send('User is in channel: ' + channel)
-            # create StreamPlayer
-            voice_client = await voice_channel.connect()
-            audio_source  = discord.FFmpegPCMAudio(executable="./bin/ffmpeg.exe", source='./src/asset/voice/kolezanko_przepraszam.mp3')
-            if not voice_client.is_playing():
-                voice_client.play(audio_source, after=None)
-            # disconnect after the player has finished
-            # await voice_client.disconnect()
-        else:
-            await context.channel.send('User is not in a channel.')
+        if user.voice is not None:
+            self.voice_channel = user.voice.channel
+        if self.voice_channel is None:
+            self.voice_channel = self.get_voice_channel(client)
+        if self.voice_channel is None:
+            await context.channel.send('<@!{user.id}> Nie ma nikogo na głosowym ziomeczku.')
+            return
+
+        if not self.is_connected:
+            self.voice_client = await self.voice_channel.connect()
+            self.is_connected = True
+        self.last_active_time = datetime.datetime.now()
+        original_title = title
+        title = title + '.mp3' if title is not None else self.rand_item()
+        if not isfile(join(self.path, title)):
+            await context.channel.send(f'<@!{user.id}> eghm nie ma czegoś takiego jak {original_title}')
+
+        audio_source = discord.FFmpegPCMAudio(
+            executable=self.path_to_ffmpeg,
+            source=self.path + '/' + title
+        )
+        if not self.voice_client.is_playing():
+            self.voice_client.play(audio_source, after=None)
+
+        if not self.is_waiting:
+            while self.is_waiting:
+                if datetime.datetime.now() - self.last_active_time > datetime.timedelta(minutes=5):
+                    await self.voice_client.disconnect()
+                else:
+                    sleep(60)
+
+    def get_voice_channel(self, client):
+        for server in client.guilds:
+            for channel in server.channels:
+                if channel.type.name == 'voice':
+                    if channel.members:
+                        return channel
+        return None
+
+    async def check_activity(self):
+        await self.voice_client.disconnect()
+
+    def rand_item(self):
+        return self.files[random.randint(0, len(self.files) - 1)]

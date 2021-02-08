@@ -7,6 +7,7 @@ from src.command.run_code import run_code
 from src.command.ciri import Ciri
 from src.command.decide import decide
 from src.command.voice import Voice
+from src.command.cppify import cppify
 
 test_cmd = TestCMD()
 votekick_zajma = VotekickZajma()
@@ -27,8 +28,9 @@ start_with_command_db = {
     '+votekick': lambda args: votekick.run(args),
     '+run': lambda args: run_code(args),
     '+czy': lambda args: decide(),
+    '+ccpify': lambda args: cppify(args)
 }
 
 async_command_db = {
-    '+v': voice.run,
+    '+płotnik': voice.run,
 }

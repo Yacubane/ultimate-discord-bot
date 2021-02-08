@@ -12,8 +12,9 @@ class MessageProcessor:
             response_message = context_free_command_db[message](message_object, client)
             return is_response, response_message
 
-        if message in async_command_db.keys():
-            await async_command_db[message](message_object, client, discord)
+        cmd = message.split(" ")[0]
+        if cmd in async_command_db.keys():
+            await async_command_db[cmd](message_object, client, discord)
 
         for cmd_name in start_with_command_db:
             if message.startswith(cmd_name):
