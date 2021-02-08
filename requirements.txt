@@ -2,3 +2,4 @@ discord
 psutil
 requests
 python-dotenv
+PyNaCl
