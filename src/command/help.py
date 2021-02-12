@@ -7,6 +7,9 @@ desc = """
 - +bajo jajo
 - +czy [question]
 - +run ` ` ` code ` ` ` | uruchamia podzik w pytongu
+- +plotnik | odtwarza na voice randomowy tekst Płotnikowskiego
+- +plotnik <quote_name> | odtwarza na voice rybrany tekst Płotnikowskiego
+- +cppify <string to cppify> | transformuje podany string na bardzo ceplusplusowy
 """
 
 
