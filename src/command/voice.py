@@ -4,8 +4,10 @@ import datetime
 from os import listdir
 from os.path import isfile, join
 import random
+from dotenv import load_dotenv
 
-DEV_MODE = os.environ['PRIVATE_KEY']
+load_dotenv()
+DEV_MODE = os.environ['DEV_MODE']
 
 
 class Voice:
