@@ -7,7 +7,7 @@ import random
 from dotenv import load_dotenv
 
 load_dotenv()
-DEV_MODE = os.environ['DEV_MODE']
+DEV_MODE = os.getenv('DEV_MODE', False)
 
 
 class Voice:
