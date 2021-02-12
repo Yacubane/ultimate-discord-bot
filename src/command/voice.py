@@ -40,7 +40,7 @@ class Voice:
 
         if not self.is_connected:
             if not DEV_MODE:
-                discord.opus.load_opus('./bin/libopus.so.0.8.0')
+                discord.opus.load_opus('./bin/libopus.so.0')
             self.voice_client = await self.voice_channel.connect()
             self.is_connected = True
         self.last_active_time = datetime.datetime.now()
