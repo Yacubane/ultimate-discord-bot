@@ -5,6 +5,8 @@ from os import listdir
 from os.path import isfile, join
 import random
 from dotenv import load_dotenv
+import ctypes
+import ctypes.util
 
 load_dotenv()
 DEV_MODE = os.getenv('DEV_MODE', False)
@@ -37,6 +39,7 @@ class Voice:
             return
 
         if not self.is_connected:
+            discord.opus.load_opus(ctypes.util.find_library('opus'))
             self.voice_client = await self.voice_channel.connect()
             self.is_connected = True
         self.last_active_time = datetime.datetime.now()
