@@ -7,7 +7,7 @@ import random
 from dotenv import load_dotenv
 import ctypes
 import ctypes.util
-import asyncio
+import threading
 
 load_dotenv()
 DEV_MODE = os.getenv('DEV_MODE', False)
@@ -21,6 +21,8 @@ class Voice:
     last_active_time = None
     is_connected = False
     is_waiting = False
+    voice_channel_watcher = None
+    client = None
 
     def __init__(self):
         self.files = [f for f in listdir(self.path) if isfile(join(self.path, f))]
@@ -43,6 +45,7 @@ class Voice:
             if not DEV_MODE:
                 discord.opus.load_opus(ctypes.util.find_library('opus'))
             self.voice_client = await self.voice_channel.connect()
+            self.client = client
             self.is_connected = True
         self.last_active_time = datetime.datetime.now()
         original_title = title
@@ -56,7 +59,7 @@ class Voice:
         )
         if not self.voice_client.is_playing():
             self.voice_client.play(audio_source, after=None)
-        self.wait_for_disconnect()
+        await self.wait_for_disconnect()
 
     def get_voice_channel(self, client):
         for server in client.guilds:
@@ -66,21 +69,20 @@ class Voice:
                         return channel
         return None
 
-    async def check_activity(self):
-        await self.voice_client.disconnect()
-
     def rand_item(self):
         return self.files[random.randint(0, len(self.files) - 1)]
 
-    def wait_for_disconnect(self):
+    el = None
+
+    async def wait_for_disconnect(self):
         if not self.is_waiting:
             self.is_waiting = True
-            asyncio.get_event_loop().create_task(self.thread_fn())
+            threading.Thread(target=self.thread_fn).start()
 
-    async def thread_fn(self):
+    def thread_fn(self):
         while self.is_waiting:
             if datetime.datetime.now() - self.last_active_time > datetime.timedelta(minutes=5):
-                await self.voice_client.disconnect()
+                self.client.loop.create_task(self.voice_client.disconnect())
                 self.is_waiting = False
             else:
                 sleep(60)
