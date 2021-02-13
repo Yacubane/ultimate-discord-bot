@@ -7,6 +7,7 @@ import random
 from dotenv import load_dotenv
 import ctypes
 import ctypes.util
+import threading
 
 load_dotenv()
 DEV_MODE = os.getenv('DEV_MODE', False)
@@ -55,15 +56,7 @@ class Voice:
         )
         if not self.voice_client.is_playing():
             self.voice_client.play(audio_source, after=None)
-
-        if not self.is_waiting:
-            self.is_waiting = True
-            while self.is_waiting:
-                if datetime.datetime.now() - self.last_active_time > datetime.timedelta(minutes=5):
-                    await self.voice_client.disconnect()
-                    self.is_waiting = False
-                else:
-                    sleep(60)
+        self.wait_for_disconnect()
 
     def get_voice_channel(self, client):
         for server in client.guilds:
@@ -78,3 +71,17 @@ class Voice:
 
     def rand_item(self):
         return self.files[random.randint(0, len(self.files) - 1)]
+
+    def wait_for_disconnect(self):
+        if not self.is_waiting:
+            self.is_waiting = True
+            thread = threading.Thread(target=self.thread_fn)
+            thread.start()
+
+    def thread_fn(self):
+        while self.is_waiting:
+            if datetime.datetime.now() - self.last_active_time > datetime.timedelta(minutes=5):
+                await self.voice_client.disconnect()
+                self.is_waiting = False
+            else:
+                sleep(60)
