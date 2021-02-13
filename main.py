@@ -3,10 +3,16 @@ import os
 from dotenv import load_dotenv
 from src.message_processor import MessageProcessor
 from src.watcher import Watcher
+import ctypes
+import ctypes.util
 
 load_dotenv()
 TOKEN = os.environ['PRIVATE_KEY']
+DEV_MODE = os.getenv('DEV_MODE', False)
 watcher = Watcher()
+load_dotenv()
+if not DEV_MODE:
+    discord.opus.load_opus(ctypes.util.find_library('opus'))
 
 
 class UltimateBot(discord.Client):

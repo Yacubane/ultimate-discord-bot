@@ -5,8 +5,6 @@ from os import listdir
 from os.path import isfile, join
 import random
 from dotenv import load_dotenv
-import ctypes
-import ctypes.util
 import threading
 
 load_dotenv()
@@ -29,6 +27,7 @@ class Voice:
 
     async def run(self, context, client, discord):
         message = context.content
+        self.client = client
         title = None
         if len(message) > 8:
             title = message.replace("+płotnik ", '')
@@ -42,11 +41,7 @@ class Voice:
             return
 
         if not self.is_connected:
-            if not DEV_MODE:
-                discord.opus.load_opus(ctypes.util.find_library('opus'))
-            self.voice_client = await self.voice_channel.connect()
-            self.client = client
-            self.is_connected = True
+            await self.connect_to_voice()
         self.last_active_time = datetime.datetime.now()
         original_title = title
         title = title + '.mp3' if title is not None else self.rand_item()
@@ -58,7 +53,11 @@ class Voice:
             source=self.path + '/' + title
         )
         if not self.voice_client.is_playing():
-            self.voice_client.play(audio_source, after=None)
+            try:
+                self.voice_client.play(audio_source, after=None)
+            except:
+                await self.connect_to_voice()
+                self.voice_client.play(audio_source, after=None)
         await self.wait_for_disconnect()
 
     def get_voice_channel(self, client):
@@ -68,6 +67,10 @@ class Voice:
                     if channel.members:
                         return channel
         return None
+
+    async def connect_to_voice(self):
+        self.voice_client = await self.voice_channel.connect()
+        self.is_connected = True
 
     def rand_item(self):
         return self.files[random.randint(0, len(self.files) - 1)]
