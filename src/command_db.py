@@ -28,7 +28,7 @@ start_with_command_db = {
     '+votekick': lambda args: votekick.run(args),
     '+run': lambda args: run_code(args),
     '+czy': lambda args: decide(),
-    '+ccpify': lambda args: cppify(args)
+    '+cppify': lambda args: cppify(args)
 }
 
 async_command_db = {
