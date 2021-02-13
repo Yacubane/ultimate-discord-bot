@@ -57,9 +57,11 @@ class Voice:
             self.voice_client.play(audio_source, after=None)
 
         if not self.is_waiting:
+            self.is_waiting = True
             while self.is_waiting:
                 if datetime.datetime.now() - self.last_active_time > datetime.timedelta(minutes=5):
                     await self.voice_client.disconnect()
+                    self.is_waiting = False
                 else:
                     sleep(60)
 
