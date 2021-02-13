@@ -7,7 +7,7 @@ import random
 from dotenv import load_dotenv
 import ctypes
 import ctypes.util
-import threading
+import asyncio
 
 load_dotenv()
 DEV_MODE = os.getenv('DEV_MODE', False)
@@ -75,10 +75,9 @@ class Voice:
     def wait_for_disconnect(self):
         if not self.is_waiting:
             self.is_waiting = True
-            thread = threading.Thread(target=self.thread_fn)
-            thread.start()
+            asyncio.get_event_loop().create_task(self.thread_fn())
 
-    def thread_fn(self):
+    async def thread_fn(self):
         while self.is_waiting:
             if datetime.datetime.now() - self.last_active_time > datetime.timedelta(minutes=5):
                 await self.voice_client.disconnect()
