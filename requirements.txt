@@ -6,3 +6,4 @@ PyNaCl
 requests
 pymongo
 pymongo[srv]
+dnspython
