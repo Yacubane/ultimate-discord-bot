@@ -47,8 +47,8 @@ class Curio:
     def get_last_url(self):
         item = self.db.find_one()
         if item:
-            return item['last_instagram_image']
-        return None
+            return item['_id'], item['last_instagram_image']
+        return None, None
 
     def set_last_url(self, url):
         self.db.update({'type': 'instagram'}, {'type': 'instagram', 'last_instagram_image': url}, True)
@@ -81,14 +81,17 @@ class Curio:
         is_list = False
         if isinstance(items, list):
             image_url = items[0]['node']['display_url']
+            image_id = items[0]['node']['id']
             is_list = True
         else:
             image_url = items['node']['display_url']
-        if image_url == self.get_last_url():
+            image_id = items['node']['id']
+        _, db_img_id = self.get_last_url()
+        if image_id == db_img_id:
             return
         if is_list:
             for item in items:
                 await self.curio_channel.send(item['node']['display_url'])
         else:
             await self.curio_channel.send(image_url)
-        self.set_last_url(image_url)
+        self.set_last_url(image_id)
