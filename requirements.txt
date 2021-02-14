@@ -3,3 +3,6 @@ psutil
 requests
 python-dotenv
 PyNaCl
+requests
+pymongo
+pymongo[srv]
