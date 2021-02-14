@@ -1,11 +1,12 @@
 import os
-from time import sleep
+import random
+import discord
 import datetime
+import threading
+from time import sleep
 from os import listdir
 from os.path import isfile, join
-import random
 from dotenv import load_dotenv
-import threading
 
 load_dotenv()
 DEV_MODE = os.getenv('DEV_MODE', False)
@@ -25,19 +26,19 @@ class Voice:
     def __init__(self):
         self.files = [f for f in listdir(self.path) if isfile(join(self.path, f))]
 
-    async def run(self, context, client, discord):
-        message = context.content
+    async def run(self, message_object, client):
+        message = message_object.content
         self.client = client
         title = None
         if len(message) > 8:
             title = message.replace("+płotnik ", '')
-        user = context.author
-        if user.voice is not None:
-            self.voice_channel = user.voice.channel
-        if self.voice_channel is None:
+        user = message_object.author
+        # if user.voice:
+        #     self.voice_channel = user.voice.channel
+        if not self.voice_channel:
             self.voice_channel = self.get_voice_channel(client)
-        if self.voice_channel is None:
-            await context.channel.send('<@!{user.id}> Nie ma nikogo na głosowym ziomeczku.')
+        if not self.voice_channel:
+            await message_object.channel.send(f'<@!{user.id}> Nie ma nikogo na głosowym ziomeczku.')
             return
 
         if not self.is_connected:
@@ -46,7 +47,7 @@ class Voice:
         original_title = title
         title = title + '.mp3' if title is not None else self.rand_item()
         if not isfile(join(self.path, title)):
-            await context.channel.send(f'<@!{user.id}> eghm nie ma czegoś takiego jak {original_title}')
+            await message_object.channel.send(f'<@!{user.id}> eghm nie ma czegoś takiego jak {original_title}')
 
         audio_source = discord.FFmpegPCMAudio(
             executable=self.path_to_ffmpeg,
@@ -74,8 +75,6 @@ class Voice:
 
     def rand_item(self):
         return self.files[random.randint(0, len(self.files) - 1)]
-
-    el = None
 
     async def wait_for_disconnect(self):
         if not self.is_waiting:

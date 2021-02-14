@@ -15,4 +15,3 @@ desc = """
 
 def print_help():
     return desc
-
