@@ -2,7 +2,6 @@ import os
 import discord
 import ctypes.util
 from dotenv import load_dotenv
-
 from src.client import UltimateBotClient
 
 load_dotenv()

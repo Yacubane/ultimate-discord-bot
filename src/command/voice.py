@@ -3,12 +3,12 @@ import random
 import discord
 import datetime
 import threading
+import numpy as np
 from time import sleep
 from os import listdir
 from os.path import isfile, join
-from dotenv import load_dotenv
+from src.utils.utils import levenshtein
 
-load_dotenv()
 DEV_MODE = os.getenv('DEV_MODE', False)
 
 
@@ -33,8 +33,8 @@ class Voice:
         if len(message) > 8:
             title = message.replace("+płotnik ", '')
         user = message_object.author
-        # if user.voice:
-        #     self.voice_channel = user.voice.channel
+        if user.voice:
+            self.voice_channel = user.voice.channel
         if not self.voice_channel:
             self.voice_channel = self.get_voice_channel(client)
         if not self.voice_channel:
@@ -45,8 +45,8 @@ class Voice:
             await self.connect_to_voice()
         self.last_active_time = datetime.datetime.now()
         original_title = title
-        title = title + '.mp3' if title is not None else self.rand_item()
-        if not isfile(join(self.path, title)):
+        title = self.get_title(title)
+        if not title:
             await message_object.channel.send(f'<@!{user.id}> eghm nie ma czegoś takiego jak {original_title}')
 
         audio_source = discord.FFmpegPCMAudio(
@@ -88,3 +88,21 @@ class Voice:
                 self.is_waiting = False
             else:
                 sleep(60)
+
+    def get_title(self, title):
+        if title:
+            if isfile(join(self.path, title + '.mp3')):
+                return title + '.mp3'
+            else:
+                min_distance, result_name = 15, ""
+                distance_array = [(levenshtein(title, file_name), file_name) for file_name in self.files]
+                for distance_item in distance_array:
+                    distance, name = distance_item
+                    if min_distance >= distance:
+                        min_distance, result_name = distance_item
+                if min_distance < 15:
+                    return result_name
+                else:
+                    return None
+        else:
+            return self.rand_item()
