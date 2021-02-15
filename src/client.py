@@ -8,13 +8,17 @@ class UltimateBotClient(discord.Client):
     watcher: Watcher = Watcher()
     message_processor: MessageProcessor = None
     services = []
+    is_ready = False
 
     async def on_ready(self):
         print(f'{self.user} Ultimate discord BOT connected!')
         self.services.append(Curio(self))
         self.message_processor = MessageProcessor(self)
+        self.is_ready = True
 
     async def on_message(self, message):
+        if not self.is_ready:
+            return
         if message.author == self.user:
             return
         is_response, response_message = await self.message_processor.parse(message, self)
