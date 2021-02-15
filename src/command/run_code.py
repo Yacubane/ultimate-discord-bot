@@ -6,7 +6,7 @@ import urllib
 
 
 def run_code(args):
-    regex = r"\+run\s*```\s*([\s\S]*)```\s*"
+    regex = r"\+run\s*`{1,3}\s*([\s\S]*[^`])`{1,3}\s*"
     matches = re.finditer(regex, args.content, re.MULTILINE)
     code = ""
     for matchNum, match in enumerate(matches, start=1):
@@ -14,6 +14,10 @@ def run_code(args):
             code = match.group(groupNum + 1)
             break
         break
+    for diacritic, replacement in [('ą', 'a'), ('ę', 'e'), ('ś', 's'),
+                                   ('ż', 'z'), ('ć', 'c'), ('ń', 'n'),
+                                   ('ó', 'o'), ('ł', 'l')]:
+        code = code.replace(diacritic, replacement)
 
     url = 'https://pynative.com/editor.php'
     post_fields = {"data": '{"source_code":"' + code + '","language_id":10,"stdin":""}'}

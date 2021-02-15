@@ -1,6 +1,5 @@
 desc = """
 **Funkcje**
-- +votekick zajma | Zajma dostaje ostrzerzenie
 - +votekick @user | @user dostaje ostrzerzenie
 - +votekick stats
 - +ciri | :disappointed_relieved: [*]

@@ -3,32 +3,36 @@ import random
 import discord
 import datetime
 import threading
-import numpy as np
 from time import sleep
 from os import listdir
 from os.path import isfile, join
+
 from src.utils.utils import levenshtein
 
 DEV_MODE = os.getenv('DEV_MODE', False)
 
 
 class Voice:
-    path = './src/asset/voice'
-    path_to_ffmpeg = "./bin/ffmpeg.exe" if DEV_MODE else "./bin/ffmpeg"
-    voice_client = None
+    path: str = './src/asset/voice'
+    path_to_ffmpeg: str = "./bin/ffmpeg.exe" if DEV_MODE else "./bin/ffmpeg"
+    voice_client: discord.VoiceClient = None
+    client = None
     voice_channel = None
     last_active_time = None
-    is_connected = False
-    is_waiting = False
-    voice_channel_watcher = None
-    client = None
+    is_connected: bool = False
+    is_waiting: bool = False
 
-    def __init__(self):
+    def __init__(self, client):
         self.files = [f for f in listdir(self.path) if isfile(join(self.path, f))]
-
-    async def run(self, message_object, client):
-        message = message_object.content
         self.client = client
+
+    def clean(self):
+        self.voice_channel = None
+        self.is_connected: bool = False
+        self.is_waiting: bool = False
+
+    async def run(self, message_object):
+        message = message_object.content
         title = None
         if len(message) > 8:
             title = message.replace("+płotnik ", '')
@@ -36,7 +40,7 @@ class Voice:
         if user.voice:
             self.voice_channel = user.voice.channel
         if not self.voice_channel:
-            self.voice_channel = self.get_voice_channel(client)
+            self.voice_channel = self.get_voice_channel()
         if not self.voice_channel:
             await message_object.channel.send(f'<@!{user.id}> Nie ma nikogo na głosowym ziomeczku.')
             return
@@ -61,8 +65,8 @@ class Voice:
                 self.voice_client.play(audio_source, after=None)
         await self.wait_for_disconnect()
 
-    def get_voice_channel(self, client):
-        for server in client.guilds:
+    def get_voice_channel(self):
+        for server in self.client.guilds:
             for channel in server.channels:
                 if channel.type.name == 'voice':
                     if channel.members:
@@ -85,11 +89,11 @@ class Voice:
         while self.is_waiting:
             if datetime.datetime.now() - self.last_active_time > datetime.timedelta(minutes=5):
                 self.client.loop.create_task(self.voice_client.disconnect())
-                self.is_waiting = False
+                self.clean()
             else:
                 sleep(60)
 
-    def get_title(self, title):
+    def get_title(self, title: str):
         if title:
             if isfile(join(self.path, title + '.mp3')):
                 return title + '.mp3'

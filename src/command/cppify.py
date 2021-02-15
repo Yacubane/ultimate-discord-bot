@@ -3,9 +3,7 @@ import random
 
 
 def cppify(message):
-    transformed = message.content.lower()\
-        .replace("+ccpify ", '')\
-        .replace("'\".//\\`~!@#$%^&*()_+{}|:,.<>?", '')
+    transformed = message.content.lower().replace("+cppify ", '')
     if random.randint(0, 1) % 2:
         transformed = transformed.title()
         if random.randint(0, 1) % 2:
@@ -13,7 +11,11 @@ def cppify(message):
     else:
         vowels = "aąeęiouy"
         transformed = re.sub(r'[' + vowels + '\s*]', '', transformed)
-    transformed = transformed.replace(" ", '')
+    for diacritic, replacement in [('ą', 'a'), ('ę', 'e'), ('ś', 's'),
+                                   ('ż', 'z'), ('ć', 'c'), ('ń', 'n'),
+                                   ('ó', 'o'), ('ł', 'l')]:
+        transformed = transformed.replace(diacritic, replacement)
+    transformed = re.sub(r"[^a-zA-Z0-9_]", "", transformed, 0, re.MULTILINE)
     output = ""
     if random.randint(0, 1) % 2:
         output = 'const '

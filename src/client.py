@@ -5,13 +5,14 @@ from src.service.curio import Curio
 
 
 class UltimateBotClient(discord.Client):
-    # watcher = Watcher()
-    message_processor = MessageProcessor()
+    # watcher: Watcher = Watcher()
+    message_processor: MessageProcessor = None
     services = []
 
     async def on_ready(self):
         print(f'{self.user} Ultimate discord BOT connected!')
         self.services.append(Curio(self))
+        self.message_processor = MessageProcessor(self)
 
     async def on_message(self, message):
         if message.author == self.user:
