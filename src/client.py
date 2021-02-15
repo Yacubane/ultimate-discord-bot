@@ -5,7 +5,7 @@ from src.service.curio import Curio
 
 
 class UltimateBotClient(discord.Client):
-    # watcher: Watcher = Watcher()
+    watcher: Watcher = Watcher()
     message_processor: MessageProcessor = None
     services = []
 
@@ -24,4 +24,4 @@ class UltimateBotClient(discord.Client):
                 await message.channel.send(f'Discord dopuszcza wiadomości <=2000 znaków, a to coś ma {message_length}')
             else:
                 await message.channel.send(response_message)
-        # await watcher.check(message)
+        await self.watcher.check(message)
