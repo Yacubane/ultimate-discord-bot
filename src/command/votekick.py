@@ -18,10 +18,20 @@ class Votekick:
                 'counter': 1,
                 'last_vote': datetime.datetime.now(),
                 'kicks_timestamp': [],
+                'who_voted': [message_object.author.id],
             }
+            await message_object.channel.send(f'<@!{message_object.author.id}> Przyjąłem zgłoszenie.')
+            return
         else:
             if datetime.datetime.now() - self.db[voted_user.id]['last_vote'] > datetime.timedelta(minutes=5):
                 self.db[voted_user.id]['counter'] = 0
+                self.db[voted_user.id]['who_voted'] = []
+
+            if message_object.author.id in self.db[voted_user.id]['who_voted']:
+                await message_object.channel.send(f'<@!{message_object.author.id}> Ty już na niego zagłosowałeś')
+                return
+
+            self.db[voted_user.id]['who_voted'].append(message_object.author.id)
             self.db[voted_user.id]['last_vote'] = datetime.datetime.now()
             self.db[voted_user.id]['counter'] += 1
             lives = 3 - self.db[voted_user.id]['counter']
