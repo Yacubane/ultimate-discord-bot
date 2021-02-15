@@ -11,8 +11,8 @@ from src.command.cppify import cppify
 
 class CommandDB:
     test_cmd = TestCMD()
-    vote_kick = Votekick()
     ciri = Ciri()
+    vote_kick = None
     voice = None
 
     context_free_command_db = {}
@@ -21,6 +21,7 @@ class CommandDB:
 
     def __init__(self, client):
         self.voice = Voice(client)
+        self.vote_kick = Votekick(client)
         self.context_free_command_db = {
             '+test': lambda context, client: self.test_cmd.run(),
             '+bajo jajo': lambda context, client: bajo_jajo(),
@@ -30,7 +31,6 @@ class CommandDB:
         }
 
         self.start_with_command_db = {
-            '+votekick': lambda args: self.vote_kick.run(args),
             '+run': lambda args: run_code(args),
             '+czy': lambda args: decide(),
             '+cppify': lambda args: cppify(args)
@@ -38,4 +38,5 @@ class CommandDB:
 
         self.async_command_db = {
             '+płotnik': self.voice.run,
+            '+votekick': self.vote_kick.run
         }
