@@ -8,4 +8,5 @@ class Watcher:
 
     async def check(self, message):
         # await self.trigger.run(message)
-        await self.hidden_blamer.run(message)
+        # await self.hidden_blamer.run(message)
+        pass
